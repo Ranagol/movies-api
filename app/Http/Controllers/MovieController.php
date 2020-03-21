@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Movie;
 use Illuminate\Http\JsonResponse;
+use Validator;
 
 class MovieController extends Controller
 {
@@ -15,8 +16,19 @@ class MovieController extends Controller
      */
     public function index()
     {
-        return Movie::all();
+        //example for a  url request: /movies?take=10&skip=5&title=night
+        $title = request()->input('title');//take the title from the url request
+        $skip = request()->input('skip', 0);//take the skip value from the url request
+        $take = request()->input('take', Movie::count());//take the take value from the url request
+
+        if ($title) {//if title exists in url...
+            return Movie::search($title, $skip, $take);//...search by title, return pagination
+        } else {
+            return Movie::skip($skip)->take($take)->get();//...or return paginated response
+        }
     }
+    
+
 
     /**
      * Show the form for creating a new resource.
@@ -28,6 +40,9 @@ class MovieController extends Controller
         //
     }
 
+  
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -36,6 +51,15 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
+        // https://stackoverflow.com/questions/57655380/form-request-validation-not-working-it-just-loads-the-home-page-in-postman
+        $validatedData = $request->validate([
+            'title' => 'required|unique:movies|max:255',
+            'director' => 'required',
+            'duration' => 'required|integer|min:1|max:500',
+            'releaseDate' => 'required|unique:movies',
+            'imageUrl' => 'required|url',
+        ]);
+
         $movie = new Movie();
         $movie->title = $request->title;
         $movie->director = $request->director;
@@ -45,6 +69,7 @@ class MovieController extends Controller
         $movie->genre = $request->genre;
         $movie->save();
         return $movie;
+    
     }
 
     /**
