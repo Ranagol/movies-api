@@ -103,6 +103,14 @@ class MovieController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validatedData = $request->validate([
+            'title' => 'required|unique:movies|max:255',
+            'director' => 'required',
+            'duration' => 'required|integer|min:1|max:500',
+            'releaseDate' => 'required|unique:movies',
+            'imageUrl' => 'required|url',
+        ]);
+        
         $movie = Movie::findOrFail($id);
         $movie->title = $request->title;
         $movie->director = $request->director;
