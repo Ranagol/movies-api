@@ -51,7 +51,6 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        // https://stackoverflow.com/questions/57655380/form-request-validation-not-working-it-just-loads-the-home-page-in-postman
         $validatedData = $request->validate([
             'title' => 'required|unique:movies|max:255',
             'director' => 'required',
@@ -110,7 +109,7 @@ class MovieController extends Controller
             'releaseDate' => 'required|unique:movies',
             'imageUrl' => 'required|url',
         ]);
-        
+
         $movie = Movie::findOrFail($id);
         $movie->title = $request->title;
         $movie->director = $request->director;
