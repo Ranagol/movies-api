@@ -12,7 +12,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 class UserController extends Controller
 {
     //The authenticate method attempts to log a user in and generates an authorization token if the user is found in the database. It throws an error if the user is not found or if an exception occurred while trying to find the user.
-    public function authenticate(Request $request)
+    public function authenticate(Request $request)//this actually login. 
     {
         $credentials = $request->only('email', 'password');//take the email and the password from the request, and put them into the $credentials.
 
