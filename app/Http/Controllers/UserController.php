@@ -14,17 +14,18 @@ class UserController extends Controller
     //The authenticate method attempts to log a user in and generates an authorization token if the user is found in the database. It throws an error if the user is not found or if an exception occurred while trying to find the user.
     public function authenticate(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password');//take the email and the password from the request, and put them into the $credentials.
 
         try {
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'invalid_credentials'], 400);
+            if (! $token = JWTAuth::attempt($credentials)) {//this creates toke: $token = JWTAuth::attempt($credentials). '!' means: if there is no token created
+
+                return response()->json(['error' => 'invalid_credentials'], 400);//with return, we are ending this try immediatelly.
             }
-        } catch (JWTException $e) {
+        } catch (JWTException $e) {// if something went wrong whilst attempting to encode the token, then catch
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        return response()->json(compact('token'));
+        return response()->json(compact('token'));//if everything is OK, return a token. The compact() here is same as the compact() what we use for returning blade views with data. So, that is why 'token' is actually $token. And the $token is created a few lines above this.
     }
 
 
@@ -48,9 +49,9 @@ class UserController extends Controller
             'password' => Hash::make($request->get('password')),
         ]);
 
-        $token = JWTAuth::fromUser($user);
+        $token = JWTAuth::fromUser($user);//durign a succesfull registration we are also making a token...
 
-        return response()->json(compact('user','token'),201);
+        return response()->json(compact('user','token'),201);//...and we are also returning to the user
     }
 
 
@@ -60,7 +61,7 @@ class UserController extends Controller
         try {
 
             if (! $user = JWTAuth::parseToken()->authenticate()) {
-                    return response()->json(['user_not_found'], 404);
+                return response()->json(['user_not_found'], 404);
             }
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {

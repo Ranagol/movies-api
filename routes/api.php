@@ -37,12 +37,12 @@ D:\API\movies-api>php artisan route:list
 +--------+-----------+-------------------------+----------------+----------------------------------------------+--------------+
 */
 
-//so, register and login are not protected by jwt...
+//so, register, open and login are not protected by jwt... They are freely accesible
 Route::post('register', 'UserController@register');
 Route::post('login', 'UserController@authenticate');
 Route::get('open', 'DataController@open');
 
-//but these routes are
+//but these routes are protected by jwt. The user must have a token. Which can be received with registration or login.
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('user', 'UserController@getAuthenticatedUser');
     Route::get('closed', 'DataController@closed');
