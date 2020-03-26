@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('movies','MovieController');
+
 
 /*
 D:\API\movies-api>php artisan route:list
@@ -36,3 +36,15 @@ D:\API\movies-api>php artisan route:list
 |        | GET|HEAD  | api/user                |                | Closure                                      | api,auth:api |
 +--------+-----------+-------------------------+----------------+----------------------------------------------+--------------+
 */
+
+//so, register and login are not protected by jwt...
+Route::post('register', 'UserController@register');
+Route::post('login', 'UserController@authenticate');
+Route::get('open', 'DataController@open');
+
+//but these routes are
+Route::group(['middleware' => ['jwt.verify']], function() {
+    Route::get('user', 'UserController@getAuthenticatedUser');
+    Route::get('closed', 'DataController@closed');
+    Route::resource('movies','MovieController');
+});
